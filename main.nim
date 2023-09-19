@@ -1,8 +1,10 @@
 import raylib, std/lenientops
+import std/random
 import std/sequtils
 import std/math
 
 
+randomize()
 const
   screenWidth = 800
   screenHeight = 600
@@ -15,6 +17,7 @@ type
     origin: Vector2
     rotation = 0.0
     speed = Vector2(x: 0, y:0)
+    hp = 10
   point = object
     x: int = screenWidth div 2
     y: int = screenHeight div 3
@@ -33,6 +36,7 @@ var
   angle: float = 90
   ccenter = point()
   seqBullets: seq[Bullet] = @[]
+  enemies: seq[Entity] = @[]
 
 proc initGame =
   ship.texture = loadTexture("resources/ship.png")
@@ -55,19 +59,7 @@ proc draw*(entity: var Entity) =
     White
   )
 
-proc updateGame =
-  var
-    plusX = distance * cos degToRad angle
-    plusY = distance * sin degToRad angle
-    dx = ccenter.x - ship.dest.x
-    dy = ccenter.y - ship.dest.y
-    theta = arctan2(dy, dx)
-
-  echo radToDeg theta
-
-  ship.dest.x = ccenter.x + plusX
-  ship.dest.y = ccenter.y + plusY
-
+proc game_input(theta: float) =
   if isKeyDown(A):
     var val = if angle <= 180: 1 else: 0
     angle += val.toFloat
@@ -78,6 +70,59 @@ proc updateGame =
     var b = Bullet(x: ship.dest.x, y: ship.dest.y, r:5, c: Orange, s: 3, a: radToDeg theta)
     seqBullets.add(b)
 
+proc add_enemies(n: int) =
+  if enemies.len < n:
+    var ent: Entity
+    ent.texture = loadTexture("resources/eye.png")
+    ent.source = Rectangle(x: 0, y: 0, width: ent.texture.width.toFloat, height: ent.texture.height.toFloat)
+    ent.dest = Rectangle(x: rand(0..screenWidth).float32, y: rand(0..screenHeight).float32, width: ent.texture.width.toFloat, height: ent.texture.height.toFloat)
+    ent.origin = Vector2(x: ent.texture.width.toFloat/2, y:ent.texture.height.toFloat/2)
+    enemies.add(ent)
+
+proc collissions() =
+  var 
+    delete: seq[int] = @[]
+    bulldelete: seq[int] = @[]
+  for enemy in enemies.mitems:
+    for bullet in seqBullets.mitems:
+      var
+        center = Vector2(x: bullet.x, y:bullet.y)
+        radius: float32 = 5
+
+      if checkCollisionCircleRec(center, radius, enemy.dest):
+        # bulldelete.add(seqBullets.find(bullet))
+        enemy.hp -= 1
+
+      if enemy.hp <= 0:
+        if enemies.find(enemy) notin delete:
+          delete.add(enemies.find(enemy))
+    
+  if delete.len > 0:
+    for val in 0..<delete.len:
+      enemies.delete(delete[delete.len-1 - val])
+
+  if bulldelete.len > 0:
+    echo bulldelete
+    for vval in 0..<bulldelete.len:
+      enemies.delete(bulldelete[bulldelete.len-1 - vval])
+
+
+
+proc updateGame =
+  var
+    plusX = distance * cos degToRad angle
+    plusY = distance * sin degToRad angle
+    dx = ccenter.x - ship.dest.x
+    dy = ccenter.y - ship.dest.y
+    theta = arctan2(dy, dx)
+
+  ship.dest.x = ccenter.x + plusX
+  ship.dest.y = ccenter.y + plusY
+
+  game_input(theta)
+  add_enemies(5)
+  collissions()
+
   for bullet in seqBullets.mitems:
     var 
       px = bullet.s * cos degToRad bullet.a
@@ -87,7 +132,6 @@ proc updateGame =
     bullet.y += py
   
 
-  echo seqBullets.len
 
 
 proc drawGame =
@@ -100,6 +144,9 @@ proc drawGame =
 
   for circ in seqBullets:
     drawCircle(circ.x.int32, circ.y.int32, circ.r, circ.c)
+
+  for enemy in enemies.mitems:
+    draw enemy
 
 
   draw ship

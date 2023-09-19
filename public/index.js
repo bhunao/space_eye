@@ -129,7 +129,6 @@ var Module = typeof Module != 'undefined' ? Module : {};
         if (!check) throw msg + new Error().stack;
       }
 Module['FS_createPath']("/", "resources", true, true);
-Module['FS_createPath']("/resources", "pexe", true, true);
 
       /** @constructor */
       function DataRequest(start, end, audio) {
@@ -197,7 +196,7 @@ Module['FS_createPath']("/resources", "pexe", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/resources/jingles_SAX06.ogg", "start": 0, "end": 11167, "audio": 1}, {"filename": "/resources/frog.png", "start": 11167, "end": 45435}, {"filename": "/resources/bg.jpeg", "start": 45435, "end": 116242}, {"filename": "/resources/background.png", "start": 116242, "end": 546309}, {"filename": "/resources/Cen\u0430rio.png", "start": 546309, "end": 6332556}, {"filename": "/resources/frog_sit.png", "start": 6332556, "end": 6368191}, {"filename": "/resources/tongue_full.png", "start": 6368191, "end": 6378047}, {"filename": "/resources/tongue_end.png", "start": 6378047, "end": 6388547}, {"filename": "/resources/goldfish.png", "start": 6388547, "end": 6411713}, {"filename": "/resources/frog.png~", "start": 6411713, "end": 7119802}, {"filename": "/resources/tongue_middle.png", "start": 7119802, "end": 7128069}, {"filename": "/resources/INGHIA.png", "start": 7128069, "end": 7148147}, {"filename": "/resources/lesma.png", "start": 7148147, "end": 7167838}, {"filename": "/resources/pexe/pexe 3.png", "start": 7167838, "end": 7179221}, {"filename": "/resources/pexe/pexe 4.png", "start": 7179221, "end": 7190581}, {"filename": "/resources/pexe/pexe 2.png", "start": 7190581, "end": 7202035}, {"filename": "/resources/pexe/pexe 9.png", "start": 7202035, "end": 7213559}, {"filename": "/resources/pexe/pexe 1.png", "start": 7213559, "end": 7224987}, {"filename": "/resources/pexe/pexe 8.png", "start": 7224987, "end": 7236278}, {"filename": "/resources/pexe/pexe 10.png", "start": 7236278, "end": 7247847}, {"filename": "/resources/pexe/pexe 7.png", "start": 7247847, "end": 7259177}, {"filename": "/resources/pexe/pexe 5.png", "start": 7259177, "end": 7270375}, {"filename": "/resources/pexe/pexe 6.png", "start": 7270375, "end": 7281640}], "remote_package_size": 7281640, "package_uuid": "27d427f0-0223-47f9-bed6-07fc54e5d8c7"});
+    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/frog.png~", "start": 639, "end": 708728}, {"filename": "/resources/eye.png", "start": 708728, "end": 710153}], "remote_package_size": 710153, "package_uuid": "57c32ed1-9761-4c13-a47e-28912f32f12b"});
 
   })();
 
