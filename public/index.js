@@ -196,7 +196,7 @@ Module['FS_createPath']("/", "resources", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/frog.png~", "start": 639, "end": 708728}, {"filename": "/resources/blueye.png", "start": 708728, "end": 721118}, {"filename": "/resources/eye.png", "start": 721118, "end": 722543}], "remote_package_size": 722543, "package_uuid": "c49bd0a2-fba5-4dd3-b69a-1604067198b6"});
+    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/frog.png~", "start": 639, "end": 708728}, {"filename": "/resources/blueye.png", "start": 708728, "end": 721118}, {"filename": "/resources/eye.png", "start": 721118, "end": 722543}], "remote_package_size": 722543, "package_uuid": "2251c6d9-bdbc-44d0-8d6f-87512de18839"});
 
   })();
 
@@ -7546,6 +7546,12 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
       GLctx.bindBuffer(target, GL.buffers[buffer]);
     }
 
+  function _glBindFramebuffer(target, framebuffer) {
+  
+      GLctx.bindFramebuffer(target, GL.framebuffers[framebuffer]);
+  
+    }
+
   function _glBindTexture(target, texture) {
       GLctx.bindTexture(target, GL.textures[texture]);
     }
@@ -7614,6 +7620,17 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
       }
     }
 
+  function _glDeleteFramebuffers(n, framebuffers) {
+      for (var i = 0; i < n; ++i) {
+        var id = HEAP32[(((framebuffers)+(i*4))>>2)];
+        var framebuffer = GL.framebuffers[id];
+        if (!framebuffer) continue; // GL spec: "glDeleteFramebuffers silently ignores 0s and names that do not correspond to existing framebuffer objects".
+        GLctx.deleteFramebuffer(framebuffer);
+        framebuffer.name = 0;
+        GL.framebuffers[id] = null;
+      }
+    }
+
   function _glDeleteProgram(id) {
       if (!id) return;
       var program = GL.programs[id];
@@ -7624,6 +7641,17 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
       GLctx.deleteProgram(program);
       program.name = 0;
       GL.programs[id] = null;
+    }
+
+  function _glDeleteRenderbuffers(n, renderbuffers) {
+      for (var i = 0; i < n; i++) {
+        var id = HEAP32[(((renderbuffers)+(i*4))>>2)];
+        var renderbuffer = GL.renderbuffers[id];
+        if (!renderbuffer) continue; // GL spec: "glDeleteRenderbuffers silently ignores 0s and names that do not correspond to existing renderbuffer objects".
+        GLctx.deleteRenderbuffer(renderbuffer);
+        renderbuffer.name = 0;
+        GL.renderbuffers[id] = null;
+      }
     }
 
   function _glDeleteShader(id) {
@@ -7678,10 +7706,20 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
       GLctx.enableVertexAttribArray(index);
     }
 
+  function _glFramebufferTexture2D(target, attachment, textarget, texture, level) {
+      GLctx.framebufferTexture2D(target, attachment, textarget,
+                                      GL.textures[texture], level);
+    }
+
   function _glFrontFace(x0) { GLctx['frontFace'](x0) }
 
   function _glGenBuffers(n, buffers) {
       __glGenObject(n, buffers, 'createBuffer', GL.buffers
+        );
+    }
+
+  function _glGenFramebuffers(n, ids) {
+      __glGenObject(n, ids, 'createFramebuffer', GL.framebuffers
         );
     }
 
@@ -7696,6 +7734,15 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
 
   function _glGetFloatv(name_, p) {
       emscriptenWebGLGet(name_, p, 2);
+    }
+
+  function _glGetFramebufferAttachmentParameteriv(target, attachment, pname, params) {
+      var result = GLctx.getFramebufferAttachmentParameter(target, attachment, pname);
+      if (result instanceof WebGLRenderbuffer ||
+          result instanceof WebGLTexture) {
+        result = result.name | 0;
+      }
+      HEAP32[((params)>>2)] = result;
     }
 
   function _glGetProgramInfoLog(program, maxLength, length, infoLog) {
@@ -9623,6 +9670,7 @@ var asmLibraryArg = {
   "glAttachShader": _glAttachShader,
   "glBindAttribLocation": _glBindAttribLocation,
   "glBindBuffer": _glBindBuffer,
+  "glBindFramebuffer": _glBindFramebuffer,
   "glBindTexture": _glBindTexture,
   "glBlendFunc": _glBlendFunc,
   "glBufferData": _glBufferData,
@@ -9636,7 +9684,9 @@ var asmLibraryArg = {
   "glCreateShader": _glCreateShader,
   "glCullFace": _glCullFace,
   "glDeleteBuffers": _glDeleteBuffers,
+  "glDeleteFramebuffers": _glDeleteFramebuffers,
   "glDeleteProgram": _glDeleteProgram,
+  "glDeleteRenderbuffers": _glDeleteRenderbuffers,
   "glDeleteShader": _glDeleteShader,
   "glDeleteTextures": _glDeleteTextures,
   "glDepthFunc": _glDepthFunc,
@@ -9647,11 +9697,14 @@ var asmLibraryArg = {
   "glDrawElements": _glDrawElements,
   "glEnable": _glEnable,
   "glEnableVertexAttribArray": _glEnableVertexAttribArray,
+  "glFramebufferTexture2D": _glFramebufferTexture2D,
   "glFrontFace": _glFrontFace,
   "glGenBuffers": _glGenBuffers,
+  "glGenFramebuffers": _glGenFramebuffers,
   "glGenTextures": _glGenTextures,
   "glGetAttribLocation": _glGetAttribLocation,
   "glGetFloatv": _glGetFloatv,
+  "glGetFramebufferAttachmentParameteriv": _glGetFramebufferAttachmentParameteriv,
   "glGetProgramInfoLog": _glGetProgramInfoLog,
   "glGetProgramiv": _glGetProgramiv,
   "glGetShaderInfoLog": _glGetShaderInfoLog,
@@ -9769,6 +9822,12 @@ var stackRestore = Module["stackRestore"] = createExportWrapper("stackRestore");
 
 /** @type {function(...*):?} */
 var stackAlloc = Module["stackAlloc"] = createExportWrapper("stackAlloc");
+
+/** @type {function(...*):?} */
+var dynCall_ff = Module["dynCall_ff"] = createExportWrapper("dynCall_ff");
+
+/** @type {function(...*):?} */
+var dynCall_fff = Module["dynCall_fff"] = createExportWrapper("dynCall_fff");
 
 /** @type {function(...*):?} */
 var dynCall_iiii = Module["dynCall_iiii"] = createExportWrapper("dynCall_iiii");
