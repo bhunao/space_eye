@@ -196,7 +196,7 @@ Module['FS_createPath']("/", "resources", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/frog.png~", "start": 639, "end": 708728}, {"filename": "/resources/eye.png", "start": 708728, "end": 710153}], "remote_package_size": 710153, "package_uuid": "57c32ed1-9761-4c13-a47e-28912f32f12b"});
+    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/frog.png~", "start": 639, "end": 708728}, {"filename": "/resources/blueye.png", "start": 708728, "end": 721118}, {"filename": "/resources/eye.png", "start": 721118, "end": 722543}], "remote_package_size": 722543, "package_uuid": "c49bd0a2-fba5-4dd3-b69a-1604067198b6"});
 
   })();
 
@@ -4425,6 +4425,33 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
   }
   }
 
+  function ___syscall_fstat64(fd, buf) {
+  try {
+  
+      var stream = SYSCALLS.getStreamFromFD(fd);
+      return SYSCALLS.doStat(FS.stat, stream.path, buf);
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
+  function ___syscall_fstatat64(dirfd, path, buf, flags) {
+  try {
+  
+      path = SYSCALLS.getStr(path);
+      var nofollow = flags & 256;
+      var allowEmpty = flags & 4096;
+      flags = flags & (~4352);
+      assert(!flags, flags);
+      path = SYSCALLS.calculateAt(dirfd, path, allowEmpty);
+      return SYSCALLS.doStat(nofollow ? FS.lstat : FS.stat, path, buf);
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
   function ___syscall_getcwd(buf, size) {
   try {
   
@@ -4495,6 +4522,17 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
   }
   }
 
+  function ___syscall_lstat64(path, buf) {
+  try {
+  
+      path = SYSCALLS.getStr(path);
+      return SYSCALLS.doStat(FS.lstat, path, buf);
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
   function ___syscall_open(path, flags, varargs) {
   SYSCALLS.varargs = varargs;
   try {
@@ -4503,6 +4541,17 @@ function GetCanvasWidth(){ return canvas.clientWidth; }
       var mode = varargs ? SYSCALLS.get() : 0;
       var stream = FS.open(pathname, flags, mode);
       return stream.fd;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
+  function ___syscall_stat64(path, buf) {
+  try {
+  
+      path = SYSCALLS.getStr(path);
+      return SYSCALLS.doStat(FS.stat, path, buf);
     } catch (e) {
     if (typeof FS == 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
     return -e.errno;
@@ -9378,9 +9427,13 @@ var asmLibraryArg = {
   "GetCanvasWidth": GetCanvasWidth,
   "__assert_fail": ___assert_fail,
   "__syscall_fcntl64": ___syscall_fcntl64,
+  "__syscall_fstat64": ___syscall_fstat64,
+  "__syscall_fstatat64": ___syscall_fstatat64,
   "__syscall_getcwd": ___syscall_getcwd,
   "__syscall_ioctl": ___syscall_ioctl,
+  "__syscall_lstat64": ___syscall_lstat64,
   "__syscall_open": ___syscall_open,
+  "__syscall_stat64": ___syscall_stat64,
   "_mmap_js": __mmap_js,
   "_munmap_js": __munmap_js,
   "emscripten_get_element_css_size": _emscripten_get_element_css_size,
