@@ -33,14 +33,11 @@ var
 
 
 proc initGame =
-  ship.texture = loadTexture("resources/ship.png")
-  ship.source = Rectangle(x: 0, y: 0, width: ship.texture.width.toFloat, height: ship.texture.height.toFloat)
-  ship.dest = Rectangle(x: screenWidth/2, y: screenHeight/2, width: ship.texture.width.toFloat, height: ship.texture.height.toFloat)
-  ship.origin = Vector2(x: ship.texture.width.toFloat/2, y:ship.texture.height.toFloat/2)
+  ship = initEntity(screenWidth/2, screenHeight/2, "resources/ship.png")
   ship.distance = 300
   ship.angle = 90
 
-  eye = initEntity(ccenter.x, ccenter.y, "resources/eye.png")
+  eye = initEntity(ccenter.x, ccenter.y, "resources/olho 2.png")
 
   var 
     orbit_distance = 75.0
@@ -48,36 +45,31 @@ proc initGame =
     mult = 360 / 20
 
   for angval in valrange:
-    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/blueye.png")
+    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/olho.png")
+    var image = ent.texture.loadImageFromTexture
+    image.imageColorTint(Gold)
+    ent.texture = image.loadTextureFromImage
     ent.angle = angval * mult
     ent.distance = orbit_distance + 45.0
     floatingEyes.add(ent)
+
   for angval in valrange:
-    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/blueye.png")
+    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/olho.png")
     var image = ent.texture.loadImageFromTexture
-    imageColorInvert(image)
+    image.imageColorTint(Red)
     ent.texture = image.loadTextureFromImage
     ent.angle = angval * mult
     ent.distance = orbit_distance
     floatingEyes2.add(ent)
+
   for angval in valrange:
-    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/blueye.png")
+    var ent = initEntity(screenWidth/2, screenHeight/2, "resources/olho.png")
     var image = ent.texture.loadImageFromTexture
-    image.imageColorTint(Purple)
+    image.imageColorTint(SkyBlue)
     ent.texture = image.loadTextureFromImage
     ent.angle = angval * mult
     ent.distance = orbit_distance
     floatingEyes3.add(ent)
-
-proc draw*(entity: var Entity) =
-  drawTexture(
-    entity.texture,
-    entity.source,
-    entity.dest,
-    entity.origin,
-    entity.rotation,
-    White
-  )
 
 proc game_input(theta: float) =
   if isKeyDown(A):
@@ -125,7 +117,6 @@ proc collissions() =
     echo bulldelete
     for vval in 0..<bulldelete.len:
       enemies.delete(bulldelete[bulldelete.len-1 - vval])
-
 
 proc roundAround(obj: var Entity) =
   var
@@ -183,8 +174,7 @@ proc drawGame =
   clearBackground(Black)
 
   drawCircleLines(ccenter.x, ccenter.y, ship.distance, DarkBlue)
-  draw eye
-  drawCircleLines(ccenter.x, ccenter.y, 5, Red)
+  draw eye, 90
 
   for circ in seqBullets:
     drawCircle(circ.x.int32, circ.y.int32, circ.r, circ.c)
@@ -197,7 +187,6 @@ proc drawGame =
     draw enemy
   for enemy in floatingEyes3.mitems:
     draw enemy
-
 
   draw ship
 

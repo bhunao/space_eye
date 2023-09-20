@@ -1,6 +1,4 @@
-import raylib, std/lenientops
-import std/random
-import std/math
+import raylib
 
 
 type
@@ -30,13 +28,13 @@ proc initEntity*(x, y: float, path: string, origin: Origin = MID): Entity =
   of TOPLEFT:
     result.origin = Vector2(x: 0, y: 0)
 
-proc draw*(entity: var Entity) =
+proc draw*(entity: var Entity, rotation: float = 0) =
   drawTexture(
     entity.texture,
     entity.source,
     entity.dest,
     entity.origin,
-    entity.rotation,
+    rotation,
     White
   )
 
