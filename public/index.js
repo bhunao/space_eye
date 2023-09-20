@@ -196,7 +196,7 @@ Module['FS_createPath']("/", "resources", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/olho.png", "start": 639, "end": 1782}, {"filename": "/resources/frog.png~", "start": 1782, "end": 709871}, {"filename": "/resources/olho 2.png", "start": 709871, "end": 717224}, {"filename": "/resources/blueye.png", "start": 717224, "end": 729614}, {"filename": "/resources/eye.png", "start": 729614, "end": 731039}], "remote_package_size": 731039, "package_uuid": "a4f646fe-0952-4f18-93c7-31c4c591c967"});
+    loadPackage({"files": [{"filename": "/resources/ship.png", "start": 0, "end": 639}, {"filename": "/resources/olho.png", "start": 639, "end": 1782}, {"filename": "/resources/frog.png~", "start": 1782, "end": 709871}, {"filename": "/resources/olho 2.png", "start": 709871, "end": 717224}, {"filename": "/resources/blueye.png", "start": 717224, "end": 729614}, {"filename": "/resources/eye.png", "start": 729614, "end": 731039}], "remote_package_size": 731039, "package_uuid": "b0402232-2243-47c3-9589-d5e1c5e0caaa"});
 
   })();
 
